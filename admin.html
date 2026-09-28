@@ -18,11 +18,10 @@
     <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col justify-between hidden md:flex z-20">
         <div>
             <div class="h-16 flex items-center px-6 bg-slate-950 font-bold text-xl text-white gap-3">
-                <i class="fa-solid fa-store text-indigo-500"></i>
-                <span>Admin Pro</span>
+                <i class="fa-solid fa-store text-indigo-500"></i><span>Admin Pro</span>
             </div>
             <nav class="p-4 space-y-1">
-                <a href="#products" onclick="switchTab('products')" id="nav-products" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 transition">
+                <a href="#products" onclick="switchTab('products')" id="nav-products" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-indigo-600 text-white shadow-lg transition">
                     <i class="fa-solid fa-box text-base"></i> Quản lý sản phẩm
                 </a>
                 <a href="#orders" onclick="switchTab('orders')" id="nav-orders" class="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-slate-800 hover:text-white transition">
@@ -48,57 +47,52 @@
 
         <main class="flex-1 overflow-y-auto p-6 space-y-6">
 
-            <!-- TAB 1: SẢN PHẨM -->
+            <!-- TAB SẢN PHẨM -->
             <div id="tab-products" class="space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase text-xs font-semibold">
-                                <tr>
-                                    <th class="py-3.5 px-4">Sản Phẩm</th>
-                                    <th class="py-3.5 px-4">Danh Mục</th>
-                                    <th class="py-3.5 px-4">Giá Bán</th>
-                                    <th class="py-3.5 px-4">Tồn Kho</th>
-                                    <th class="py-3.5 px-4 text-right">Thao Tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="py-3.5 px-4">Sản Phẩm</th>
+                                <th class="py-3.5 px-4">Danh Mục</th>
+                                <th class="py-3.5 px-4">Giá Bán</th>
+                                <th class="py-3.5 px-4">Tồn Kho</th>
+                                <th class="py-3.5 px-4 text-right">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- TAB 2: ĐƠN HÀNG KHÁCH HÀNG -->
+            <!-- TAB ĐƠN HÀNG (CẬP NHẬT MỚI) -->
             <div id="tab-orders" class="hidden space-y-6">
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="p-4 border-b border-slate-100 flex items-center justify-between">
                         <h3 class="font-bold text-slate-800">Danh Sách Đơn Hàng Từ Khách</h3>
                         <button onclick="loadOrders()" class="p-2 text-slate-500 hover:text-indigo-600 rounded-xl"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase text-xs font-semibold">
-                                <tr>
-                                    <th class="py-3.5 px-4">Mã Đơn</th>
-                                    <th class="py-3.5 px-4">Khách Hàng</th>
-                                    <th class="py-3.5 px-4">SĐT / Email</th>
-                                    <th class="py-3.5 px-4">Địa Chỉ</th>
-                                    <th class="py-3.5 px-4">Tổng Tiền</th>
-                                    <th class="py-3.5 px-4 text-right">Thao Tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="orderTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 uppercase text-xs font-semibold">
+                            <tr>
+                                <th class="py-3.5 px-4">Mã Đơn</th>
+                                <th class="py-3.5 px-4">Khách Hàng & Liên Hệ</th>
+                                <th class="py-3.5 px-4">Chi Tiết Sản Phẩm Mua</th>
+                                <th class="py-3.5 px-4">Tổng Tiền</th>
+                                <th class="py-3.5 px-4 text-right">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody" class="divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- TAB 3: THÔNG BÁO -->
+            <!-- TAB THÔNG BÁO -->
             <div id="tab-notify" class="hidden max-w-2xl mx-auto">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                     <h2 class="text-lg font-bold">Phát Thông Báo Website</h2>
-                    <input type="text" id="notifyTitle" placeholder="Tiêu đề thông báo..." class="w-full px-4 py-2 border rounded-xl">
-                    <textarea id="notifyContent" rows="4" placeholder="Nội dung chi tiết..." class="w-full px-4 py-2 border rounded-xl"></textarea>
+                    <input type="text" id="notifyTitle" placeholder="Tiêu đề..." class="w-full px-4 py-2 border rounded-xl">
+                    <textarea id="notifyContent" rows="4" placeholder="Nội dung..." class="w-full px-4 py-2 border rounded-xl"></textarea>
                     <button onclick="sendWebNotification()" class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-xl">Phát Thông Báo</button>
                 </div>
             </div>
@@ -106,62 +100,43 @@
         </main>
     </div>
 
-    <!-- MODAL THÊM/SỬA SẢN PHẨM -->
+    <!-- MODAL SẢN PHẨM GIỮ NGUYÊN (BASE64) -->
     <div id="productModal" class="fixed inset-0 bg-slate-950/40 hidden items-center justify-center p-4 z-50">
         <div class="bg-white rounded-2xl w-full max-w-md p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 id="modalTitle" class="font-bold text-lg">Thêm Sản Phẩm</h3>
             <form id="productForm" onsubmit="handleSaveProduct(event)" class="space-y-3">
                 <input type="hidden" id="pId">
-                
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Tên Sản Phẩm *</label>
-                    <input type="text" id="pName" required placeholder="Tên sản phẩm..." class="w-full px-3.5 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="pName" required class="w-full px-3.5 py-2 border rounded-xl text-sm">
                 </div>
-
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Danh Mục *</label>
-                        <input type="text" id="pCat" required placeholder="Danh mục..." class="w-full px-3.5 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
+                        <input type="text" id="pCat" required class="w-full px-3.5 py-2 border rounded-xl text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Giá Bán (VNĐ) *</label>
-                        <input type="number" id="pPrice" required placeholder="Giá bán..." class="w-full px-3.5 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
+                        <input type="number" id="pPrice" required class="w-full px-3.5 py-2 border rounded-xl text-sm">
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Số Lượng Tồn Kho</label>
-                    <input type="number" id="pStock" value="100" placeholder="Tồn kho" class="w-full px-3.5 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
+                    <input type="number" id="pStock" value="100" class="w-full px-3.5 py-2 border rounded-xl text-sm font-bold text-indigo-600">
                 </div>
-
-                <!-- KHU VỰC TẢI CẢNH TỪ MÁY TÍNH / URL -->
                 <div class="space-y-2 border-t pt-3">
                     <label class="block text-xs font-semibold text-slate-600">Hình Ảnh Sản Phẩm</label>
-                    
-                    <!-- 1. Tải từ máy tính -->
-                    <div class="flex flex-col gap-1">
-                        <span class="text-[11px] text-slate-500">Tải ảnh từ máy tính:</span>
-                        <input type="file" id="pImgFile" accept="image/*" onchange="handleFileSelect(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer">
-                    </div>
-
+                    <input type="file" id="pImgFile" accept="image/*" onchange="handleFileSelect(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 cursor-pointer">
                     <div class="text-center text-xs text-slate-400 font-medium">- Hoặc -</div>
-
-                    <!-- 2. Nhập URL -->
-                    <input type="url" id="pImg" placeholder="Dán đường dẫn ảnh (URL)..." oninput="handleUrlInput(this.value)" class="w-full px-3.5 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500">
-
-                    <!-- Vùng hiển thị xem trước ảnh -->
+                    <input type="url" id="pImg" placeholder="Dán URL ảnh..." oninput="handleUrlInput(this.value)" class="w-full px-3.5 py-2 border rounded-xl text-sm">
                     <div id="previewContainer" class="hidden items-center gap-3 p-2 bg-slate-50 rounded-xl border border-slate-200 mt-2">
                         <img id="imgPreview" src="" class="w-16 h-16 object-cover rounded-lg border border-slate-200">
-                        <div class="flex-1">
-                            <p class="text-xs font-semibold text-slate-700">Xem trước hình ảnh</p>
-                            <button type="button" onclick="removeImage()" class="text-xs text-rose-500 hover:underline mt-1">Xóa ảnh này</button>
-                        </div>
+                        <button type="button" onclick="removeImage()" class="text-xs text-rose-500">Xóa ảnh</button>
                     </div>
                 </div>
-
                 <div class="flex justify-end gap-2 pt-3 border-t">
                     <button type="button" onclick="closeProductModal()" class="px-4 py-2 text-sm text-slate-600 font-semibold">Hủy</button>
-                    <button type="submit" id="btnSave" class="px-5 py-2 text-sm bg-indigo-600 text-white rounded-xl font-semibold shadow-md shadow-indigo-200 hover:bg-indigo-700">Lưu Sản Phẩm</button>
+                    <button type="submit" id="btnSave" class="px-5 py-2 text-sm bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">Lưu Sản Phẩm</button>
                 </div>
             </form>
         </div>
@@ -169,8 +144,7 @@
 
     <script>
         const API_URL = "https://sweet-mud-da35.nhanv1699.workers.dev";
-        let products = [], orders = [];
-        let currentImageBase64 = ""; // Biến lưu chuỗi ảnh Base64 từ máy tính
+        let products = [], orders = [], currentImageBase64 = "";
 
         const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000 });
 
@@ -178,14 +152,14 @@
             try {
                 const res = await fetch(`${API_URL}/api/products`);
                 const data = await res.json();
-                products = Array.isArray(data) ? data : (data.products || []);
+                products = Array.isArray(data) ? data : [];
                 renderProducts(products);
-            } catch(e) { console.error(e); }
+            } catch(e) {}
         }
 
         function renderProducts(list) {
             const tbody = document.getElementById('productTableBody');
-            if(!list.length) { tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Không có sản phẩm nào</td></tr>`; return; }
+            if(!list.length) { tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Không có sản phẩm</td></tr>`; return; }
             tbody.innerHTML = list.map(p => `
                 <tr class="hover:bg-slate-50">
                     <td class="py-3 px-4 flex items-center gap-3">
@@ -194,221 +168,104 @@
                     </td>
                     <td class="py-3 px-4">${p.cat || ''}</td>
                     <td class="py-3 px-4 font-bold text-slate-900">${Number(p.price || 0).toLocaleString()}₫</td>
-                    <td class="py-3 px-4">${p.stock || 0}</td>
-                    <td class="py-3 px-4 text-right space-x-1">
-                        <button onclick="editProduct('${p.id}')" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg" title="Sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                    <td class="py-3 px-4 font-bold ${p.stock <= 0 ? 'text-rose-500' : 'text-emerald-600'}">${p.stock || 0}</td>
+                    <td class="py-3 px-4 text-right">
+                        <button onclick="editProduct('${p.id}')" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-lg"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteProduct('${p.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
-        }
-
-        // XỬ LÝ CHỌN FILE ẢNH TỪ MÁY TÍNH
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                // Kiểm tra dung lượng (khuyên dùng dưới 3MB)
-                if (file.size > 3 * 1024 * 1024) {
-                    Toast.fire({ icon: 'warning', title: 'Ảnh quá lớn! Vui lòng chọn ảnh < 3MB' });
-                    event.target.value = "";
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentImageBase64 = e.target.result;
-                    document.getElementById('pImg').value = ""; // Xóa bớt ô URL
-                    showImagePreview(currentImageBase64);
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // XỬ LÝ NHẬP URL
-        function handleUrlInput(url) {
-            if(url.trim()) {
-                currentImageBase64 = ""; 
-                document.getElementById('pImgFile').value = "";
-                showImagePreview(url.trim());
-            } else {
-                hideImagePreview();
-            }
-        }
-
-        function showImagePreview(src) {
-            document.getElementById('imgPreview').src = src;
-            document.getElementById('previewContainer').classList.remove('hidden');
-            document.getElementById('previewContainer').classList.add('flex');
-        }
-
-        function hideImagePreview() {
-            document.getElementById('imgPreview').src = "";
-            document.getElementById('previewContainer').classList.remove('flex');
-            document.getElementById('previewContainer').classList.add('hidden');
-        }
-
-        function removeImage() {
-            currentImageBase64 = "";
-            document.getElementById('pImgFile').value = "";
-            document.getElementById('pImg').value = "";
-            hideImagePreview();
-        }
-
-        function editProduct(id) {
-            const p = products.find(item => String(item.id) === String(id));
-            if(p) openProductModal(p);
-        }
-
-        function openProductModal(p = null) {
-            document.getElementById('productForm').reset();
-            removeImage();
-
-            if(p) {
-                document.getElementById('modalTitle').innerText = "Cập Nhật Sản Phẩm";
-                document.getElementById('pId').value = p.id;
-                document.getElementById('pName').value = p.name || '';
-                document.getElementById('pCat').value = p.cat || '';
-                document.getElementById('pPrice').value = p.price || 0;
-                document.getElementById('pStock').value = p.stock || 0;
-                
-                if(p.img) {
-                    if(p.img.startsWith('data:image')) {
-                        currentImageBase64 = p.img;
-                    } else {
-                        document.getElementById('pImg').value = p.img;
-                    }
-                    showImagePreview(p.img);
-                }
-            } else {
-                document.getElementById('modalTitle').innerText = "Thêm Sản Phẩm Mới";
-                document.getElementById('pId').value = '';
-            }
-            document.getElementById('productModal').classList.remove('hidden');
-            document.getElementById('productModal').classList.add('flex');
-        }
-
-        function closeProductModal() { 
-            document.getElementById('productModal').classList.add('hidden'); 
-            document.getElementById('productModal').classList.remove('flex'); 
-        }
-
-        async function handleSaveProduct(e) {
-            e.preventDefault();
-            const btnSave = document.getElementById('btnSave');
-            btnSave.disabled = true;
-            btnSave.innerText = "Đang lưu...";
-
-            // Ưu tiên chọn ảnh từ máy tính (Base64), sau đó đến link URL
-            const finalImg = currentImageBase64 || document.getElementById('pImg').value;
-
-            const productData = {
-                id: document.getElementById('pId').value || null,
-                name: document.getElementById('pName').value,
-                cat: document.getElementById('pCat').value,
-                price: Number(document.getElementById('pPrice').value),
-                stock: Number(document.getElementById('pStock').value),
-                img: finalImg
-            };
-
-            try {
-                const res = await fetch(`${API_URL}/api/admin/products`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(productData)
-                });
-
-                if(res.ok) {
-                    Toast.fire({ icon: 'success', title: 'Đã lưu sản phẩm thành công!' });
-                    closeProductModal();
-                    loadProducts();
-                } else {
-                    Toast.fire({ icon: 'error', title: 'Không thể lưu sản phẩm!' });
-                }
-            } catch(err) {
-                Toast.fire({ icon: 'error', title: 'Lỗi kết nối Server!' });
-            } finally {
-                btnSave.disabled = false;
-                btnSave.innerText = "Lưu Sản Phẩm";
-            }
-        }
-
-        async function deleteProduct(id) {
-            if(confirm("Bạn chắc chắn muốn xóa sản phẩm này?")) {
-                await fetch(`${API_URL}/api/admin/products/delete`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id}) });
-                Toast.fire({ icon: 'success', title: 'Đã xóa sản phẩm!' });
-                loadProducts();
-            }
         }
 
         async function loadOrders() {
             try {
                 const res = await fetch(`${API_URL}/api/admin/orders`);
                 const data = await res.json();
-                orders = Array.isArray(data) ? data : (data.orders || []);
+                orders = Array.isArray(data) ? data : [];
                 renderOrders(orders);
-            } catch(e) { console.error(e); }
+            } catch(e) {}
+        }
+
+        // HÀM RENDER SẢN PHẨM TRONG ĐƠN HÀNG
+        function formatOrderItems(items, order) {
+            if(items && items.length > 0) {
+                return items.map(i => `<div class="mb-1 text-sm">• ${i.name || 'Sản phẩm'} <span class="text-indigo-600 font-bold ml-1">x${i.quantity || 1}</span></div>`).join('');
+            } else if (order.productName) {
+                return `<div class="text-sm">• ${order.productName} <span class="text-indigo-600 font-bold ml-1">x${order.quantity || 1}</span></div>`;
+            }
+            return '<span class="text-slate-400 italic">Không rõ chi tiết</span>';
         }
 
         function renderOrders(list) {
             const tbody = document.getElementById('orderTableBody');
-            if(!list.length) { tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Chưa có đơn hàng nào</td></tr>`; return; }
+            if(!list.length) { tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Chưa có đơn hàng nào</td></tr>`; return; }
             tbody.innerHTML = list.map(o => `
-                <tr class="hover:bg-slate-50">
-                    <td class="py-3 px-4 font-bold text-indigo-600">${o.id}</td>
-                    <td class="py-3 px-4 font-semibold">${o.name || o.customerName || 'N/A'}</td>
-                    <td class="py-3 px-4">${o.phone || o.email || 'N/A'}</td>
-                    <td class="py-3 px-4 max-w-xs truncate">${o.address || 'N/A'}</td>
-                    <td class="py-3 px-4 font-bold text-emerald-600">${Number(o.total || o.totalPrice || 0).toLocaleString()}₫</td>
-                    <td class="py-3 px-4 text-right">
+                <tr class="hover:bg-slate-50 align-top">
+                    <td class="py-4 px-4 font-bold text-indigo-600">${o.id}</td>
+                    <td class="py-4 px-4">
+                        <p class="font-bold text-slate-800 mb-1">${o.name || o.customerName || 'N/A'}</p>
+                        <p class="text-xs text-slate-500"><i class="fa-solid fa-phone mr-1"></i> ${o.phone || o.email || 'N/A'}</p>
+                        <p class="text-xs text-slate-500 mt-1 max-w-[200px] truncate" title="${o.address}"><i class="fa-solid fa-location-dot mr-1"></i> ${o.address || 'N/A'}</p>
+                    </td>
+                    <td class="py-4 px-4">
+                        ${formatOrderItems(o.items, o)}
+                    </td>
+                    <td class="py-4 px-4 font-bold text-emerald-600">${Number(o.total || o.totalPrice || 0).toLocaleString()}₫</td>
+                    <td class="py-4 px-4 text-right">
                         <button onclick="deleteOrder('${o.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg" title="Xóa đơn"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        async function deleteOrder(id) {
-            if(confirm("Xóa đơn hàng này?")) {
-                await fetch(`${API_URL}/api/admin/orders/delete`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id}) });
-                loadOrders();
-            }
+        // CÁC HÀM XỬ LÝ ẢNH & SẢN PHẨM KHÁC (GIỮ NGUYÊN)
+        function handleFileSelect(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = (ev) => { currentImageBase64 = ev.target.result; document.getElementById('pImg').value = ""; document.getElementById('imgPreview').src = currentImageBase64; document.getElementById('previewContainer').classList.replace('hidden', 'flex'); }; r.readAsDataURL(f); } }
+        function handleUrlInput(url) { if(url.trim()){ currentImageBase64 = ""; document.getElementById('pImgFile').value = ""; document.getElementById('imgPreview').src = url; document.getElementById('previewContainer').classList.replace('hidden', 'flex'); } else { removeImage(); } }
+        function removeImage() { currentImageBase64 = ""; document.getElementById('pImgFile').value = ""; document.getElementById('pImg').value = ""; document.getElementById('previewContainer').classList.replace('flex', 'hidden'); }
+        
+        function openProductModal(p = null) {
+            document.getElementById('productForm').reset(); removeImage();
+            if(p) {
+                document.getElementById('modalTitle').innerText = "Cập Nhật Sản Phẩm";
+                document.getElementById('pId').value = p.id; document.getElementById('pName').value = p.name || '';
+                document.getElementById('pCat').value = p.cat || ''; document.getElementById('pPrice').value = p.price || 0;
+                document.getElementById('pStock').value = p.stock || 0;
+                if(p.img) { if(p.img.startsWith('data:image')) { currentImageBase64 = p.img; } else { document.getElementById('pImg').value = p.img; } document.getElementById('imgPreview').src = p.img; document.getElementById('previewContainer').classList.replace('hidden', 'flex'); }
+            } else { document.getElementById('modalTitle').innerText = "Thêm Sản Phẩm Mới"; document.getElementById('pId').value = ''; }
+            document.getElementById('productModal').classList.replace('hidden', 'flex');
+        }
+        function closeProductModal() { document.getElementById('productModal').classList.replace('flex', 'hidden'); }
+        function editProduct(id) { const p = products.find(i => String(i.id) === String(id)); if(p) openProductModal(p); }
+
+        async function handleSaveProduct(e) {
+            e.preventDefault(); const btn = document.getElementById('btnSave'); btn.disabled = true; btn.innerText = "Đang lưu...";
+            const data = { id: document.getElementById('pId').value || null, name: document.getElementById('pName').value, cat: document.getElementById('pCat').value, price: Number(document.getElementById('pPrice').value), stock: Number(document.getElementById('pStock').value), img: currentImageBase64 || document.getElementById('pImg').value };
+            try { await fetch(`${API_URL}/api/admin/products`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data) }); Toast.fire({icon:'success', title:'Lưu thành công!'}); closeProductModal(); loadProducts(); } 
+            catch(err) { Toast.fire({icon:'error', title:'Lỗi kết nối!'}); } finally { btn.disabled = false; btn.innerText = "Lưu Sản Phẩm"; }
         }
 
-        async function sendWebNotification() {
-            const title = document.getElementById('notifyTitle').value;
-            const content = document.getElementById('notifyContent').value;
-            if(!title || !content) return Toast.fire({ icon: 'warning', title: 'Vui lòng nhập đủ nội dung!' });
-
-            await fetch(`${API_URL}/api/admin/notify`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ title, content })
-            });
-            Toast.fire({ icon: 'success', title: 'Đã phát thông báo!' });
-            document.getElementById('notifyTitle').value = '';
-            document.getElementById('notifyContent').value = '';
-        }
+        async function deleteProduct(id) { if(confirm("Xóa sản phẩm này?")) { await fetch(`${API_URL}/api/admin/products/delete`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id}) }); loadProducts(); } }
+        async function deleteOrder(id) { if(confirm("Xóa đơn hàng này?")) { await fetch(`${API_URL}/api/admin/orders/delete`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({id}) }); loadOrders(); } }
 
         function switchTab(tab) {
-            document.getElementById('tab-products').classList.add('hidden');
-            document.getElementById('tab-orders').classList.add('hidden');
-            document.getElementById('tab-notify').classList.add('hidden');
+            ['products', 'orders', 'notify'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-slate-800 hover:text-white transition";
+            });
             document.getElementById(`tab-${tab}`).classList.remove('hidden');
-
-            document.getElementById('nav-products').className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-slate-800 hover:text-white transition";
-            document.getElementById('nav-orders').className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-slate-800 hover:text-white transition";
-            document.getElementById('nav-notify').className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl hover:bg-slate-800 hover:text-white transition";
-
-            if(tab === 'orders') {
-                document.getElementById('pageTitle').innerText = "Quản Lý Đơn Hàng";
-                document.getElementById('nav-orders').className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 transition";
-                loadOrders();
-            } else if(tab === 'products') {
-                document.getElementById('pageTitle').innerText = "Danh Sách Sản Phẩm";
-                document.getElementById('nav-products').className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 transition";
-                loadProducts();
-            } else {
-                document.getElementById('pageTitle').innerText = "Thông Báo Web";
-                document.getElementById('nav-notify').className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 transition";
-            }
+            document.getElementById(`nav-${tab}`).className = "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl bg-indigo-600 text-white shadow-lg transition";
+            
+            if(tab === 'orders') { document.getElementById('pageTitle').innerText = "Quản Lý Đơn Hàng"; document.getElementById('headerActions').classList.add('hidden'); loadOrders(); }
+            else if(tab === 'products') { document.getElementById('pageTitle').innerText = "Danh Sách Sản Phẩm"; document.getElementById('headerActions').classList.remove('hidden'); loadProducts(); }
+            else { document.getElementById('pageTitle').innerText = "Thông Báo Web"; document.getElementById('headerActions').classList.add('hidden'); }
+        }
+        
+        async function sendWebNotification() {
+            const title = document.getElementById('notifyTitle').value; const content = document.getElementById('notifyContent').value;
+            if(!title || !content) return Toast.fire({ icon: 'warning', title: 'Nhập đủ thông tin!' });
+            await fetch(`${API_URL}/api/admin/notify`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({title, content}) });
+            Toast.fire({ icon: 'success', title: 'Đã phát thông báo!' });
+            document.getElementById('notifyTitle').value = ''; document.getElementById('notifyContent').value = '';
         }
 
         window.onload = loadProducts;
