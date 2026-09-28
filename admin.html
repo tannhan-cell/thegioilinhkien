@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị Hệ Thống - VOTANNHAN.SITE Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: #f0f2f5; color: #333; }
+        
+        /* Modal Đăng nhập Admin */
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #007bff; display: flex; justify-content: center; align-items: center; z-index: 10000; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; width: 350px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .login-box input { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ddd; border-radius: 4px; }
+        .login-box button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        /* Dashboard Main Layout */
+        .admin-header { background: #1e293b; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .wrapper { display: flex; min-height: calc(100vh - 60px); }
+        .sidebar { width: 240px; background: #334155; color: white; padding: 20px 0; }
+        .sidebar-item { padding: 12px 25px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .sidebar-item:hover, .sidebar-item.active { background: #007bff; }
+        
+        .content { flex: 1; padding: 25px; overflow-y: auto; }
+        
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .card h4 { color: #64748b; font-size: 13px; text-transform: uppercase; }
+        .card .number { font-size: 24px; font-weight: bold; color: #007bff; margin-top: 5px; }
+
+        /* Tables & Forms */
+        .panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        input, select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; width: 100%; }
+        button.btn-add { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        button.btn-add:hover { background: #059669; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 13px; }
+        th { background: #f8fafc; color: #475569; }
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-completed { background: #d1fae5; color: #059669; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body>
+
+    <!-- Màn hình Bảo mật Admin -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <i class="fas fa-user-shield" style="font-size: 40px; color: #007bff;"></i>
+            <h3 style="margin-top:10px;">ĐĂNG NHẬP ADMIN</h3>
+            <input type="password" id="adminPassInput" placeholder="Nhập mật khẩu quản trị...">
+            <button onclick="checkAdminPass()">XÁC NHẬN</button>
+        </div>
+    </div>
+
+    <div class="admin-header">
+        <h2><i class="fas fa-microchip"></i> VOTANNHAN.SITE - DASHBOARD QUẢN TRỊ</h2>
+        <button onclick="location.reload()" style="background:#ef4444; color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer;">Đăng xuất</button>
+    </div>
+
+    <div class="wrapper">
+        <div class="sidebar">
+            <div class="sidebar-item active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
+            <div class="sidebar-item" onclick="switchTab('products')"><i class="fas fa-box"></i> Quản lý sản phẩm</div>
+            <div class="sidebar-item" onclick="switchTab('orders')"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</div>
+        </div>
+
+        <div class="content">
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tabDashboard">
+                <div class="stats-grid">
+                    <div class="card">
+                        <h4>TỔNG DOANH THU</h4>
+                        <div class="number" id="statRevenue">0₫</div>
+                    </div>
+                    <div class="card">
+                        <h4>TỔNG ĐƠN HÀNG</h4>
+                        <div class="number" id="statOrdersCount">0</div>
+                    </div>
+                    <div class="card">
+                        <h4>ĐƠN CHỜ XÁC NHẬN</h4>
+                        <div class="number" style="color:#d97706" id="statPendingCount">0</div>
+                    </div>
+                    <div class="card">
+                        <h4>TỔNG LINH KIỆN SẢN PHẨM</h4>
+                        <div class="number" style="color:#10b981" id="statProductsCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: SẢN PHẨM -->
+            <div id="tabProducts" style="display:none;">
+                <div class="panel">
+                    <h3 id="formTitle">Thêm sản phẩm linh kiện mới</h3>
+                    <form id="productAdminForm" style="margin-top:15px;">
+                        <input type="hidden" id="prodEditId">
+                        <div class="form-grid">
+                            <input type="text" id="pName" placeholder="Tên linh kiện *" required>
+                            <input type="text" id="pCat" placeholder="Danh mục (VD: Điện trở, LED...)" required>
+                            <input type="number" id="pPrice" placeholder="Giá bán (VNĐ) *" required>
+                            <input type="number" id="pStock" placeholder="Số lượng tồn kho *" value="100" required>
+                        </div>
+                        <input type="url" id="pImg" placeholder="Link ảnh sản phẩm (Cloudinary, Imgur...)" style="margin-bottom:15px;" required>
+                        <button type="submit" class="btn-add"><i class="fas fa-save"></i> LƯU SẢN PHẨM</button>
+                        <button type="button" onclick="resetProdForm()" style="padding:10px; border:none; background:#64748b; color:white; border-radius:4px; margin-left:10px;">Hủy / Làm mới</button>
+                    </form>
+                </div>
+
+                <div class="panel">
+                    <h3>Danh sách sản phẩm hiện có</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Danh mục</th>
+                                <th>Giá</th>
+                                <th>Tồn kho</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductTable">
+                            <tr><td colspan="6">Đang tải...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB 3: ĐƠN HÀNG -->
+            <div id="tabOrders" style="display:none;">
+                <div class="panel">
+                    <h3>Danh sách đơn hàng từ khách</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Khách hàng</th>
+                                <th>SĐT / Zalo</th>
+                                <th>Sản phẩm đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOrderTable">
+                            <tr><td colspan="7">Đang tải đơn hàng...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDKfcPAUeXyEVRjpXmGUWp8ZehmNVU8DAg",
+          authDomain: "votannhan-shop.firebaseapp.com",
+          projectId: "votannhan-shop",
+          storageBucket: "votannhan-shop.firebasestorage.app",
+          messagingSenderId: "112895518426",
+          appId: "1:112895518426:web:239ccbdf9c6d75ab33e7e3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Mật khẩu vào trang Admin (Đổi ở đây)
+        const ADMIN_PASS = "123456";
+
+        window.checkAdminPass = function() {
+            const val = document.getElementById('adminPassInput').value;
+            if(val === ADMIN_PASS) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                loadAllData();
+            } else {
+                alert("Mật khẩu Admin không đúng!");
+            }
+        }
+
+        window.switchTab = function(tabName) {
+            ['Dashboard', 'Products', 'Orders'].forEach(t => {
+                document.getElementById('tab' + t).style.display = (t.toLowerCase() === tabName) ? 'block' : 'none';
+            });
+            document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        async function loadAllData() {
+            loadProducts();
+            loadOrders();
+        }
+
+        // --- QUẢN LÝ SẢN PHẨM ---
+        let productsData = [];
+        async function loadProducts() {
+            const snap = await getDocs(collection(db, "products"));
+            productsData = [];
+            snap.forEach(d => productsData.push({ id: d.id, ...d.data() }));
+
+            document.getElementById('statProductsCount').innerText = productsData.length;
+
+            document.getElementById('adminProductTable').innerHTML = productsData.map(p => `
+                <tr>
+                    <td><img src="${p.img}" width="40" height="40" style="object-fit:contain"></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${p.cat}</td>
+                    <td>${Number(p.price).toLocaleString()}₫</td>
+                    <td><b style="color:${p.stock <= 0 ? 'red':'green'}">${p.stock || 0}</b></td>
+                    <td>
+                        <button onclick="editProduct('${p.id}')" style="background:#0284c7; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer;">Sửa</button>
+                        <button onclick="deleteProduct('${p.id}')" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer;">Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('productAdminForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const editId = document.getElementById('prodEditId').value;
+            const payload = {
+                name: document.getElementById('pName').value,
+                cat: document.getElementById('pCat').value,
+                price: Number(document.getElementById('pPrice').value),
+                stock: Number(document.getElementById('pStock').value),
+                img: document.getElementById('pImg').value
+            };
+
+            try {
+                if(editId) {
+                    await updateDoc(doc(db, "products", editId), payload);
+                    alert("Đã cập nhật sản phẩm!");
+                } else {
+                    await addDoc(collection(db, "products"), payload);
+                    alert("Thêm sản phẩm thành công!");
+                }
+                resetProdForm();
+                loadProducts();
+            } catch(e) { alert("Lỗi: " + e.message); }
+        }
+
+        window.editProduct = function(id) {
+            const p = productsData.find(item => item.id === id);
+            if(!p) return;
+            document.getElementById('prodEditId').value = p.id;
+            document.getElementById('pName').value = p.name;
+            document.getElementById('pCat').value = p.cat;
+            document.getElementById('pPrice').value = p.price;
+            document.getElementById('pStock').value = p.stock || 100;
+            document.getElementById('pImg').value = p.img;
+            document.getElementById('formTitle').innerText = "Cập nhật thông tin sản phẩm";
+        }
+
+        window.resetProdForm = function() {
+            document.getElementById('productAdminForm').reset();
+            document.getElementById('prodEditId').value = "";
+            document.getElementById('formTitle').innerText = "Thêm sản phẩm linh kiện mới";
+        }
+
+        window.deleteProduct = async function(id) {
+            if(confirm("Bạn chắc chắn muốn xóa sản phẩm này khỏi cơ sở dữ liệu?")) {
+                await deleteDoc(doc(db, "products", id));
+                loadProducts();
+            }
+        }
+
+        // --- QUẢN LÝ ĐƠN HÀNG ---
+        async function loadOrders() {
+            const snap = await getDocs(collection(db, "orders"));
+            let orders = [];
+            let totalRev = 0;
+            let pendingCount = 0;
+
+            snap.forEach(d => {
+                const o = { id: d.id, ...d.data() };
+                orders.push(o);
+                if(o.status === 'Đã hoàn thành') totalRev += (o.total || 0);
+                if(o.status === 'Chờ xác nhận') pendingCount++;
+            });
+
+            document.getElementById('statOrdersCount').innerText = orders.length;
+            document.getElementById('statRevenue').innerText = totalRev.toLocaleString() + "₫";
+            document.getElementById('statPendingCount').innerText = pendingCount;
+
+            document.getElementById('adminOrderTable').innerHTML = orders.map(o => {
+                const itemsStr = o.items ? o.items.map(i => `${i.name} (x${i.qty})`).join('<br>') : 'Không rõ';
+                const dateStr = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('vi-VN') : 'Mới đây';
+                return `
+                <tr>
+                    <td>${dateStr}</td>
+                    <td><strong>${o.customer?.name || ''}</strong><br><small>${o.customer?.address || ''}</small></td>
+                    <td>${o.customer?.phone || ''}</td>
+                    <td>${itemsStr}</td>
+                    <td><strong style="color:#d63031">${Number(o.total || 0).toLocaleString()}₫</strong></td>
+                    <td><span class="status-badge ${o.status === 'Đã hoàn thành' ? 'status-completed' : (o.status === 'Đã hủy' ? 'status-cancelled' : 'status-pending')}">${o.status || 'Chờ xác nhận'}</span></td>
+                    <td>
+                        <select onchange="updateOrderStatus('${o.id}', this.value)">
+                            <option value="Chờ xác nhận" ${o.status==='Chờ xác nhận'?'selected':''}>Chờ xác nhận</option>
+                            <option value="Đang giao hàng" ${o.status==='Đang giao hàng'?'selected':''}>Đang giao hàng</option>
+                            <option value="Đã hoàn thành" ${o.status==='Đã hoàn thành'?'selected':''}>Đã hoàn thành</option>
+                            <option value="Đã hủy" ${o.status==='Đã hủy'?'selected':''}>Hủy đơn</option>
+                        </select>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        window.updateOrderStatus = async function(orderId, newStatus) {
+            await updateDoc(doc(db, "orders", orderId), { status: newStatus });
+            alert("Đã cập nhật trạng thái đơn hàng!");
+            loadOrders();
+        }
+    </script>
+</body>
+</html>
