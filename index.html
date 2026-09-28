@@ -3,400 +3,465 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thế Giới Linh Kiện - Cửa Hàng Trực Tuyến</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 cho thông báo mượt mà -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>VOTANNHAN.SITE - Thế Giới Linh Kiện Điện Tử</title>
+    <link rel="icon" type="image/png" href="https://sf-static.upanhlaylink.com/img/image_20260314d2907538e2b6964afd767cd26e6d9677.jpg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root { --blue: #007bff; --dark-blue: #0056b3; --border: #ddd; --light-gray: #f9f9f9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f4f4f4; color: #333; font-size: 14px; }
+
+        header { background: #fff; padding: 10px 5%; border-bottom: 1px solid var(--border); }
+        .top-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--blue); }
+        .logo i { font-size: 32px; }
+        .logo-text { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+
+        .search-bar { display: flex; flex: 0.5; border: 2px solid var(--blue); border-radius: 4px; overflow: hidden; }
+        .search-bar input { width: 100%; padding: 10px; border: none; outline: none; }
+        .search-bar button { background: var(--blue); color: white; border: none; padding: 0 15px; cursor: pointer; }
+
+        .cart-box { cursor: pointer; display: flex; align-items: center; gap: 8px; background: var(--light-gray); padding: 5px 15px; border-radius: 20px; transition: 0.2s; }
+        .cart-box:hover { background: #f0f0f0; }
+        .cart-count { background: #ff4757; color: white; border-radius: 50%; padding: 2px 7px; font-size: 12px; font-weight: bold; }
+
+        nav { background: var(--blue); color: white; padding: 0 5%; height: 45px; }
+        nav ul { display: flex; list-style: none; align-items: center; height: 100%; }
+        nav ul li { padding: 0 15px; cursor: pointer; font-weight: 600; font-size: 13px; text-transform: uppercase; transition: 0.3s; }
+        nav ul li:hover { background: var(--dark-blue); }
+
+        .container { display: flex; padding: 20px 5%; gap: 20px; }
+        aside { width: 260px; flex-shrink: 0; }
+        main { flex: 1; min-width: 0; }
+
+        .sidebar-title { background: var(--blue); color: white; padding: 12px; font-weight: bold; font-size: 13px; border-radius: 4px 4px 0 0; }
+        .sidebar-menu { list-style: none; background: white; border: 1px solid var(--border); border-radius: 0 0 4px 4px; }
+        .sidebar-menu > li { border-bottom: 1px solid #eee; }
+        .sidebar-menu > li > a { display: block; padding: 12px; text-decoration: none; color: #444; font-size: 13px; font-weight: 600; }
+        .sidebar-menu > li:hover > a { background: #f0f7ff; color: var(--blue); }
+
+        .banner-box img { width: 100%; border-radius: 4px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .section-header { background: white; padding: 12px; border-left: 4px solid var(--blue); font-weight: bold; text-transform: uppercase; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .product-card { background: white; padding: 15px; text-align: center; border: 1px solid #eee; border-radius: 4px; transition: 0.3s; position: relative; }
+        .product-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--blue); }
+        .product-card img { width: 100%; height: 140px; object-fit: contain; }
+        .product-name { font-size: 13px; font-weight: 600; height: 36px; overflow: hidden; margin: 10px 0; color: #333; }
+        .price { color: #d63031; font-weight: bold; font-size: 16px; margin-bottom: 8px; }
+        .stock-badge { font-size: 11px; color: #2ed573; background: #e8fef0; padding: 2px 6px; border-radius: 10px; display: inline-block; margin-bottom: 10px; }
+        .stock-badge.out { color: #ff4757; background: #ffe0e3; }
+        .btn-buy { background: #fff; border: 1.5px solid var(--blue); color: var(--blue); padding: 8px; width: 100%; cursor: pointer; font-size: 12px; border-radius: 3px; font-weight: bold; transition: 0.2s; }
+        .btn-buy:hover { background: var(--blue); color: #fff; }
+        .btn-buy:disabled { border-color: #ccc; color: #aaa; cursor: not-allowed; background: #f5f5f5; }
+
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 8px; width: 550px; max-height: 90vh; overflow-y: auto; box-shadow: 0 5px 25px rgba(0,0,0,0.2); }
+        .cart-item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; align-items: center; }
+        .cart-item-name { flex: 1; padding-right: 15px; font-weight: 500; }
+        .cart-item-price { font-weight: bold; color: #d63031; }
+
+        .checkout-layout { display: flex; gap: 30px; }
+        .checkout-main { flex: 1; }
+        .checkout-sidebar { width: 350px; background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #333; padding-bottom: 10px; border-bottom: 2px solid var(--blue); }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0 15px 0; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        input:focus, textarea:focus { border-color: var(--blue); outline: none; }
+        label.radio-label { display: block; border: 1px solid var(--border); padding: 12px; border-radius: 4px; margin-bottom: 10px; cursor: pointer; }
+        label.radio-label input[type="radio"] { margin-right: 10px; }
+
+        .qty-input { display: flex; align-items: center; border: 1px solid #ddd; border-radius: 4px; width: fit-content; background: #fff; }
+        .qty-input button { background: #f8f9fa; border: none; padding: 3px 10px; cursor: pointer; font-weight: bold; }
+        .qty-input span { padding: 0 12px; font-size: 14px; font-weight: bold; }
+
+        .summary-line { display: flex; justify-content: space-between; margin-bottom: 10px; color: #666; }
+        .summary-total { font-weight: 800; color: #d63031; font-size: 22px; }
+        .btn-order-final { background: var(--blue); color: white; border: none; padding: 15px; width: 100%; cursor: pointer; border-radius: 4px; font-size: 16px; font-weight: bold; }
+        .btn-order-final:hover { background: var(--dark-blue); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+<body>
+    <!-- BANNER THÔNG BÁO HIỂN THỊ TỪ ADMIN -->
+<div id="siteAnnouncement" style="display:none; background:#4f46e5; color:#ffffff; padding:12px 20px; text-align:center; position:relative; font-size:14px; font-weight:500; z-index:99999; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <span id="announcementText"></span>
+    <button onclick="document.getElementById('siteAnnouncement').style.display='none'" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); background:none; border:none; color:#ffffff; font-size:18px; cursor:pointer; opacity:0.8;">✕</button>
+</div>
 
-    <!-- 1. BANNER THÔNG BÁO TỪ ADMIN -->
-    <div id="siteAnnouncement" class="hidden bg-indigo-600 text-white text-xs sm:text-sm py-2.5 px-4 text-center font-medium relative shadow-sm z-40">
-        <div id="announcementText" class="inline-block"></div>
-        <button onclick="document.getElementById('siteAnnouncement').style.display='none'" class="absolute right-3 top-1/2 -translate-y-1/2 text-white/80 hover:text-white px-2 py-1">✕</button>
-    </div>
-
-    <!-- 2. HEADER & NAVBAR -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-            <!-- Logo -->
-            <a href="javascript:void(0)" onclick="showHome()" class="flex items-center gap-2.5 font-bold text-xl text-slate-900">
-                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-lg shadow-md shadow-indigo-200">
-                    <i class="fa-solid fa-microchip"></i>
-                </div>
-                <span>LinhKiện<span class="text-indigo-600">Pro</span></span>
+    <header>
+        <div class="top-row">
+            <a href="javascript:void(0)" onclick="showHome()" class="logo">
+                <i class="fas fa-microchip"></i> <span class="logo-text">VOTANNHAN<span style="color:#333">.SITE</span></span>
             </a>
-
-            <!-- Search Bar -->
-            <div class="flex-1 max-w-md hidden sm:block">
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="searchInput" onkeyup="searchProducts()" placeholder="Tìm kiếm linh kiện, thiết bị..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-100 border border-transparent rounded-xl focus:bg-white focus:border-indigo-500 focus:outline-none transition">
-                </div>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Tìm tên linh kiện..." onkeyup="searchProducts()">
+                <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
             </div>
-
-            <!-- Cart Button -->
-            <button onclick="toggleCartModal()" class="relative bg-slate-100 hover:bg-slate-200 text-slate-800 p-2.5 sm:px-4 sm:py-2 rounded-xl text-sm font-semibold flex items-center gap-2.5 transition">
-                <i class="fa-solid fa-cart-shopping text-indigo-600"></i>
-                <span class="hidden sm:inline">Giỏ hàng</span>
-                <span id="cartCount" class="bg-indigo-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">0</span>
-            </button>
+            <div class="cart-box" id="cartBox" onclick="toggleCart()">
+                <i class="fas fa-shopping-basket" style="font-size: 22px; color: #555;"></i>
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
         </div>
     </header>
 
-    <!-- 3. MAIN CONTENT -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+    <nav>
+        <ul>
+            <li onclick="showHome()"><i class="fas fa-home"></i> Trang chủ</li>
+            <li onclick="showAllProducts()">Sản phẩm</li>
+            <li onclick="showContact()">Liên hệ</li>
+            <li style="margin-left: auto; background: rgba(0,0,0,0.1);"><i class="fas fa-phone-alt"></i> 0348026731</li>
+        </ul>
+    </nav>
 
-        <!-- CATEGORIES MENU -->
-        <div class="flex items-center justify-between gap-4">
-            <h2 id="sectionTitle" class="text-xl font-bold text-slate-900">Sản Phẩm Nổi Bật</h2>
-            <div id="categoryContainer" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-                <button onclick="filterCategory('Tất cả')" class="cat-btn active bg-indigo-600 text-white px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm transition">Tất cả</button>
-            </div>
-        </div>
+    <div class="container">
+        <aside id="sidebarArea">
+            <div class="sidebar-title"><i class="fas fa-bars"></i> DANH MỤC LINH KIỆN</div>
+            <ul class="sidebar-menu" id="categoryMenu">
+                <li><a href="javascript:void(0)" onclick="filterCat('Tất cả')">Tất cả sản phẩm</a></li>
+            </ul>
+        </aside>
 
-        <!-- PRODUCT GRID -->
-        <div id="productsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-            <!-- Loading skeleton / Placeholder -->
-            <div class="col-span-full text-center py-12 text-slate-400 space-y-3">
-                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-indigo-600"></i>
-                <p class="text-sm font-medium">Đang tải danh sách sản phẩm...</p>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- 4. FOOTER -->
-    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
-        <p>© 2026 LinhKiệnPro - Hệ thống phân phối linh kiện uy tín.</p>
-    </footer>
-
-    <!-- 5. CART MODAL (GIỎ HÀNG) -->
-    <div id="cartModal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm hidden z-50 justify-end">
-        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between transform transition-transform">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-bold text-lg text-slate-900 flex items-center gap-2">
-                    <i class="fa-solid fa-bag-shopping text-indigo-600"></i> Giỏ Hàng Của Bạn
-                </h3>
-                <button onclick="toggleCartModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <!-- Cart Items List -->
-            <div id="cartItemsList" class="flex-1 overflow-y-auto p-5 space-y-4 divide-y divide-slate-100">
-                <p class="text-center text-slate-400 py-10 text-sm">Giỏ hàng đang trống.</p>
-            </div>
-
-            <!-- Cart Footer -->
-            <div class="p-5 border-t border-slate-100 bg-slate-50 space-y-4">
-                <div class="flex items-center justify-between font-bold text-slate-900">
-                    <span>Tổng tiền:</span>
-                    <span id="cartTotalPrice" class="text-indigo-600 text-lg">0₫</span>
+        <main id="mainContent">
+            <div id="homePage">
+                <div class="banner-box">
+                    <img src="https://sf-static.upanhlaylink.com/img/image_20260314d2907538e2b6964afd767cd26e6d9677.jpg" alt="Linh kiện điện tử giá rẻ">
                 </div>
-                <button onclick="openCheckoutModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-credit-card"></i> Tiến Hành Đặt Hàng
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 6. CHECKOUT MODAL (ĐẶT HÀNG) -->
-    <div id="checkoutModal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
-            <div class="p-5 border-b border-slate-100 flex items-center justify-between">
-                <h3 class="font-bold text-slate-900 text-lg">Thông Tin Giao Hàng</h3>
-                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <h1 class="section-header">Sản phẩm linh kiện mới nhất</h1>
+                <div class="grid" id="newProductsGrid"><p>Đang tải dữ liệu từ server...</p></div>
             </div>
 
-            <form id="checkoutForm" onsubmit="submitOrder(event)" class="p-5 overflow-y-auto space-y-4 flex-1">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Họ và Tên *</label>
-                    <input type="text" id="custName" required placeholder="Nguyễn Văn A" class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Số Điện Thoại *</label>
-                    <input type="tel" id="custPhone" required placeholder="0901234567" class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Địa Chỉ Nhận Hàng *</label>
-                    <textarea id="custAddr" required rows="2" placeholder="Số nhà, đường, phường/xã, quận/huyện..." class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500"></textarea>
-                </div>
+            <div id="allProductsPage" style="display:none;">
+                <div class="section-header" id="allCatTitle">Tất cả sản phẩm</div>
+                <div class="grid" id="allProductsGrid"></div>
+            </div>
 
-                <div class="bg-slate-50 p-4 rounded-xl space-y-2 text-sm border border-slate-100">
-                    <div class="font-semibold text-slate-700 mb-2">Tóm tắt đơn hàng:</div>
-                    <div id="checkoutSummaryList" class="space-y-1 text-slate-600 text-xs"></div>
-                    <div class="border-t border-slate-200 pt-2 flex justify-between font-bold text-slate-900 text-base">
-                        <span>Tổng thanh toán:</span>
-                        <span id="checkoutFinalTotal" class="text-indigo-600">0₫</span>
+            <div id="contactPage" style="display:none;">
+                <div class="section-header">Hỗ trợ khách hàng</div>
+                <div style="background:white; padding:30px; border-radius:8px;">
+                    <p style="margin-bottom:15px;"><i class="fas fa-comment-dots" style="color:var(--blue)"></i> Zalo Admin: 0392733577 (Võ Tấn Nhân)</p>
+                    <p style="margin-bottom:15px;"><i class="fab fa-facebook" style="color:var(--blue)"></i> Facebook: Võ Tấn Nhân</p>
+                    <p><i class="fas fa-envelope" style="color:var(--blue)"></i> Email: votannhan8@gmail.com</p>
+                </div>
+            </div>
+
+            <div id="checkoutPage" style="display:none;">
+                <form id="checkoutForm">
+                    <div class="checkout-layout">
+                        <div class="checkout-main">
+                            <div class="section-title">THÔNG TIN NHẬN HÀNG</div>
+                            <input type="text" id="custName" placeholder="Họ và tên khách hàng *" required>
+                            <input type="tel" id="custPhone" placeholder="Số điện thoại / Zalo *" required>
+                            <input type="email" id="custEmail" placeholder="Email (không bắt buộc)">
+                            <textarea id="custAddr" rows="3" placeholder="Địa chỉ giao hàng chi tiết *" required></textarea>
+                            <textarea id="custNote" rows="2" placeholder="Ghi chú đơn hàng (không bắt buộc)"></textarea>
+                            
+                            <div class="section-title" style="margin-top:30px;">THANH TOÁN</div>
+                            <label class="radio-label">
+                                <input type="radio" name="payment" value="Ship COD" checked>
+                                <strong>Ship COD</strong> - Nhận hàng thanh toán (Chuyển khoản theo hướng dẫn qua Zalo)
+                            </label>
+                        </div>
+                        
+                        <div class="checkout-sidebar">
+                            <div class="section-title">VẬN CHUYỂN</div>
+                            <label class="radio-label">
+                                <input type="radio" name="shipping" value="Giao tận nơi" data-price="29000" onclick="updateTotal()">
+                                Giao tận nơi (toàn quốc) - 29.000₫
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="shipping" value="Nhận tại cửa hàng" data-price="0" onclick="updateTotal()" checked>
+                                Nhận hàng tại cửa hàng (H1 - KTX KHU A ĐHQG) - Miễn phí
+                            </label>
+                            
+                            <div class="section-title" style="margin-top:20px;">ĐƠN HÀNG</div>
+                            <div id="checkoutProductList"></div>
+                            
+                            <hr style="margin:15px 0; border:none; border-top:1px solid #eee;">
+                            <div class="summary-line">
+                                <span>Tạm tính:</span>
+                                <span id="checkoutSubtotal">0₫</span>
+                            </div>
+                            <div class="summary-line">
+                                <span>Phí vận chuyển:</span>
+                                <span id="checkoutShippingFee">0₫</span>
+                            </div>
+                            <div class="summary-line" style="margin-top:15px; border-top:2px solid #eee; padding-top:10px;">
+                                <span style="font-weight:bold;">TỔNG CỘNG:</span>
+                                <span class="summary-total" id="checkoutFinalTotal">0₫</span>
+                            </div>
+                            
+                            <button type="submit" id="btnSubmitOrder" class="btn-order-final">📦 ĐẶT HÀNG NGAY</button>
+                            <button type="button" onclick="showHome()" style="width:100%; border:none; background:none; margin-top:15px; color:#666; cursor:pointer;">Quay về Trang chủ</button>
+                        </div>
                     </div>
-                </div>
+                </form>
+            </div>
+        </main>
+    </div>
 
-                <button type="submit" id="btnSubmitOrder" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i> XÁC NHẬN ĐẶT HÀNG
-                </button>
-            </form>
+    <!-- Modal Giỏ hàng -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <h3 style="border-bottom: 2px solid var(--blue); padding-bottom: 10px; margin-bottom: 15px;">GIỎ HÀNG CỦA BẠN</h3>
+            <div id="cartList"></div>
+            <div style="font-weight:bold; font-size:18px; color:#d63031; text-align:right; margin: 15px 0;" id="totalPrice">Tổng: 0₫</div>
+            <button type="button" class="btn-buy" style="background:var(--blue); color:white; padding:12px; font-size:14px; font-weight:bold;" onclick="goToCheckout()">TIẾP TỤC THANH TOÁN</button>
+            <button type="button" onclick="toggleCart()" style="width:100%; background:none; border:none; color:gray; margin-top:10px; cursor:pointer;">Đóng</button>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        const API_URL = "https://sweet-mud-da35.nhanv1699.workers.dev";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // === CẤU HÌNH THÔNG TIN DỰ ÁN CỦA BẠN TẠI ĐÂY ===
+        const firebaseConfig = {
+          apiKey: "YOUR_FIREBASE_API_KEY",
+          authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+          projectId: "YOUR_PROJECT_ID",
+          storageBucket: "YOUR_PROJECT_ID.appspot.com",
+          messagingSenderId: "YOUR_SENDER_ID",
+          appId: "YOUR_APP_ID"
+        };
+
+        const TG_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN';
+        const TG_CHAT_ID = 'YOUR_TELEGRAM_CHAT_ID';
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         let allProducts = [];
         let cart = [];
 
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 2000,
-            timerProgressBar: true
-        });
-
-        // Tải thông báo từ Website API
-        async function loadAnnouncement() {
+        async function fetchProductsFromFirebase() {
             try {
-                const res = await fetch(`${API_URL}/api/notify`);
-                const data = await res.json();
-                if (data.title && data.content) {
-                    document.getElementById('announcementText').innerHTML = `📢 <strong>${data.title}:</strong> ${data.content}`;
-                    document.getElementById('siteAnnouncement').style.display = 'block';
-                }
-            } catch (e) {}
-        }
-
-        // Tải danh sách sản phẩm
-        async function fetchProducts() {
-            try {
-                const res = await fetch(`${API_URL}/api/products`);
-                allProducts = await res.json();
-                renderProducts(allProducts);
+                const querySnapshot = await getDocs(collection(db, "products"));
+                allProducts = [];
+                querySnapshot.forEach((doc) => {
+                    allProducts.push({ id: doc.id, ...doc.data() });
+                });
+                renderProducts(document.getElementById('newProductsGrid'), allProducts);
                 buildCategoryMenu();
             } catch (error) {
-                console.error("Lỗi:", error);
-                document.getElementById('productsGrid').innerHTML = `
-                    <div class="col-span-full text-center py-12 text-rose-500">
-                        <i class="fa-solid fa-circle-exclamation text-3xl mb-2"></i>
-                        <p class="font-medium">Không thể tải dữ liệu sản phẩm!</p>
-                    </div>`;
+                console.error("Lỗi lấy dữ liệu:", error);
+                document.getElementById('newProductsGrid').innerHTML = "<p style='color:red'>Không thể kết nối CSDL Firebase!</p>";
             }
         }
 
-        // Hiển thị sản phẩm lên Grid
-        function renderProducts(list) {
-            const grid = document.getElementById('productsGrid');
+        function renderProducts(targetGrid, list) {
             if(!list || list.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">Không tìm thấy sản phẩm nào.</div>`;
+                targetGrid.innerHTML = "<p>Không tìm thấy sản phẩm nào.</p>";
                 return;
             }
-
-            grid.innerHTML = list.map(p => {
+            targetGrid.innerHTML = list.map(p => {
                 const stock = p.stock !== undefined ? p.stock : 100;
-                const isOut = stock <= 0;
+                const isOutOfStock = stock <= 0;
                 return `
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition">
-                    <div class="relative">
-                        <img src="${p.img || 'https://via.placeholder.com/300'}" alt="${p.name}" class="w-full h-40 sm:h-48 object-cover bg-slate-100">
-                        <span class="absolute top-2.5 left-2.5 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-semibold px-2 py-0.5 rounded-md">${p.cat}</span>
-                    </div>
-                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-                        <div>
-                            <h3 class="font-bold text-sm text-slate-900 line-clamp-2">${p.name}</h3>
-                            <div class="text-indigo-600 font-bold text-base mt-1">${Number(p.price).toLocaleString()}₫</div>
-                        </div>
-                        
-                        <button onclick="addToCart('${p.id}')" ${isOut ? 'disabled' : ''} 
-                            class="w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition ${
-                                isOut 
-                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-                                : 'bg-indigo-50 hover:bg-indigo-600 text-indigo-600 hover:text-white'
-                            }">
-                            ${isOut ? 'Hết hàng' : '<i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ'}
-                        </button>
-                    </div>
-                </div>`;
-            }).join('');
+                <div class="product-card">
+                    <img src="${p.img || 'https://via.placeholder.com/150'}" alt="${p.name}">
+                    <div class="product-name">${p.name}</div>
+                    <div class="price">${Number(p.price).toLocaleString()}₫</div>
+                    <div class="stock-badge ${isOutOfStock ? 'out' : ''}">${isOutOfStock ? 'Hết hàng' : 'Còn hàng: ' + stock}</div>
+                    <button class="btn-buy" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${p.id}')">
+                        ${isOutOfStock ? 'HẾT HÀNG' : '<i class="fas fa-cart-plus"></i> Thêm vào giỏ'}
+                    </button>
+                </div>
+            `}).join('');
         }
 
-        // Tạo menu danh mục
         function buildCategoryMenu() {
             const categories = [...new Set(allProducts.map(p => p.cat).filter(Boolean))];
-            const container = document.getElementById('categoryContainer');
-            let html = `<button onclick="filterCategory('Tất cả', this)" class="cat-btn active bg-indigo-600 text-white px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm transition">Tất cả</button>`;
-            
+            const menu = document.getElementById('categoryMenu');
+            let html = `<li><a href="javascript:void(0)" onclick="filterCat('Tất cả')">Tất cả sản phẩm</a></li>`;
             categories.forEach(cat => {
-                html += `<button onclick="filterCategory('${cat}', this)" class="cat-btn bg-white hover:bg-slate-100 text-slate-600 px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-slate-200 transition">${cat}</button>`;
+                html += `<li><a href="javascript:void(0)" onclick="filterCat('${cat}')">${cat}</a></li>`;
             });
-            container.innerHTML = html;
+            menu.innerHTML = html;
         }
 
-        function filterCategory(cat, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.className = "cat-btn bg-white hover:bg-slate-100 text-slate-600 px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap border border-slate-200 transition";
-            });
-            if(btn) btn.className = "cat-btn active bg-indigo-600 text-white px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shadow-sm transition";
-
-            document.getElementById('sectionTitle').innerText = cat === 'Tất cả' ? 'Sản Phẩm Nổi Bật' : `Danh Mục: ${cat}`;
-            const filtered = cat === 'Tất cả' ? allProducts : allProducts.filter(p => p.cat === cat);
-            renderProducts(filtered);
+        window.filterCat = function(catName) {
+            showAllProducts();
+            if(catName === 'Tất cả') {
+                renderProducts(document.getElementById('allProductsGrid'), allProducts);
+                document.getElementById('allCatTitle').innerText = "Tất cả sản phẩm";
+            } else {
+                const filtered = allProducts.filter(p => p.cat === catName);
+                renderProducts(document.getElementById('allProductsGrid'), filtered);
+                document.getElementById('allCatTitle').innerText = "Danh mục: " + catName;
+            }
         }
 
-        // Thêm vào giỏ hàng
-        function addToCart(id) {
+        window.addToCart = function(id) {
             const item = allProducts.find(p => p.id === id);
             if(!item) return;
-
-            const exist = cart.find(c => c.id === id);
-            if(exist) {
-                exist.qty += 1;
+            const existing = cart.find(c => c.id === id);
+            if(existing) {
+                existing.qty += 1;
             } else {
                 cart.push({ ...item, qty: 1 });
             }
-            updateCartUI();
-            Toast.fire({ icon: 'success', title: `Đã thêm vào giỏ hàng!` });
+            updateCart();
+            alert("Đã thêm " + item.name + " vào giỏ!");
         }
 
-        // Cập nhật giao diện giỏ hàng
-        function updateCartUI() {
-            const totalQty = cart.reduce((s, i) => s + i.qty, 0);
-            const totalPrice = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        function updateCart() {
+            document.getElementById('cartCount').innerText = cart.reduce((s, i) => s + i.qty, 0);
+            const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            document.getElementById('totalPrice').innerText = "Tổng: " + total.toLocaleString() + "₫";
 
-            document.getElementById('cartCount').innerText = totalQty;
-            document.getElementById('cartTotalPrice').innerText = totalPrice.toLocaleString() + '₫';
-
-            const listContainer = document.getElementById('cartItemsList');
-            if(cart.length === 0) {
-                listContainer.innerHTML = `<p class="text-center text-slate-400 py-10 text-sm">Giỏ hàng đang trống.</p>`;
-                return;
-            }
-
-            listContainer.innerHTML = cart.map((item, idx) => `
-                <div class="pt-3 flex items-center justify-between gap-3">
-                    <img src="${item.img || 'https://via.placeholder.com/80'}" class="w-12 h-12 rounded-lg object-cover bg-slate-100">
-                    <div class="flex-1">
-                        <h4 class="font-semibold text-xs text-slate-800 line-clamp-1">${item.name}</h4>
-                        <div class="text-indigo-600 font-bold text-xs mt-0.5">${(item.price * item.qty).toLocaleString()}₫</div>
+            document.getElementById('cartList').innerHTML = cart.map((item, idx) => `
+                <div class="cart-item">
+                    <span class="cart-item-name">${item.name}</span>
+                    <div class="qty-input">
+                        <button onclick="changeQty(${idx}, -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button onclick="changeQty(${idx}, 1)">+</button>
                     </div>
-                    <div class="flex items-center gap-2 border border-slate-200 rounded-lg px-2 py-1 bg-white">
-                        <button onclick="changeQty(${idx}, -1)" class="text-slate-400 hover:text-slate-700 text-xs">-</button>
-                        <span class="text-xs font-semibold w-4 text-center">${item.qty}</span>
-                        <button onclick="changeQty(${idx}, 1)" class="text-slate-400 hover:text-slate-700 text-xs">+</button>
-                    </div>
-                    <button onclick="removeItem(${idx})" class="text-slate-300 hover:text-rose-500 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                    <span class="cart-item-price">${(item.price * item.qty).toLocaleString()}₫</span>
+                    <i class="fas fa-trash" onclick="removeItem(${idx})" style="color:red; cursor:pointer; margin-left:15px"></i>
                 </div>
             `).join('');
         }
 
-        function changeQty(idx, delta) {
+        window.changeQty = function(idx, delta) {
             if(cart[idx].qty + delta > 0) {
                 cart[idx].qty += delta;
             } else {
                 cart.splice(idx, 1);
             }
-            updateCartUI();
+            updateCart();
+            if(document.getElementById('checkoutPage').style.display === 'block') renderCheckoutSummary();
         }
 
-        function removeItem(idx) {
+        window.removeItem = function(idx) {
             cart.splice(idx, 1);
-            updateCartUI();
+            updateCart();
+            if(document.getElementById('checkoutPage').style.display === 'block') renderCheckoutSummary();
         }
 
-        function toggleCartModal() {
+        window.toggleCart = function() {
             const m = document.getElementById('cartModal');
-            m.classList.toggle('hidden');
-            m.classList.toggle('flex');
+            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
         }
 
-        function openCheckoutModal() {
-            if(cart.length === 0) return Toast.fire({ icon: 'warning', title: 'Giỏ hàng đang trống!' });
-            toggleCartModal();
+        window.goToCheckout = function() {
+            if(cart.length === 0) return alert("Giỏ hàng đang trống!");
+            toggleCart();
+            hidePages();
+            document.getElementById('sidebarArea').style.display = 'none';
+            document.getElementById('checkoutPage').style.display = 'block';
+            renderCheckoutSummary();
+        }
 
-            const summaryList = document.getElementById('checkoutSummaryList');
-            const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            
-            summaryList.innerHTML = cart.map(i => `
-                <div class="flex justify-between">
+        function renderCheckoutSummary() {
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            document.getElementById('checkoutProductList').innerHTML = cart.map(i => `
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                     <span>${i.name} (x${i.qty})</span>
-                    <span class="font-semibold">${(i.price * i.qty).toLocaleString()}₫</span>
+                    <strong>${(i.price * i.qty).toLocaleString()}₫</strong>
                 </div>
             `).join('');
-            document.getElementById('checkoutFinalTotal').innerText = total.toLocaleString() + '₫';
-
-            const modal = document.getElementById('checkoutModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            document.getElementById('checkoutSubtotal').innerText = subtotal.toLocaleString() + "₫";
+            updateTotal();
         }
 
-        function closeCheckoutModal() {
-            const modal = document.getElementById('checkoutModal');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
+        window.updateTotal = function() {
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const shippingRadio = document.querySelector('input[name="shipping"]:checked');
+            const shippingFee = parseInt(shippingRadio.getAttribute('data-price') || 0);
+            document.getElementById('checkoutShippingFee').innerText = shippingFee === 0 ? "Miễn phí" : shippingFee.toLocaleString() + "₫";
+            document.getElementById('checkoutFinalTotal').innerText = (subtotal + shippingFee).toLocaleString() + "₫";
         }
 
-        // Gửi đơn hàng lên API Cloudflare Worker
-        async function submitOrder(e) {
+        document.getElementById('checkoutForm').onsubmit = async function(e) {
             e.preventDefault();
+            if(cart.length === 0) return alert("Giỏ hàng trống!");
+
             const btn = document.getElementById('btnSubmitOrder');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XỬ LÝ...`;
+            btn.innerText = "ĐANG XỬ LÝ ĐƠN HÀNG...";
+
+            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const shippingRadio = document.querySelector('input[name="shipping"]:checked');
+            const shippingFee = parseInt(shippingRadio.getAttribute('data-price') || 0);
+            const finalTotal = subtotal + shippingFee;
 
             const orderData = {
-                name: document.getElementById('custName').value,
-                phone: document.getElementById('custPhone').value,
-                address: document.getElementById('custAddr').value,
-                total: cart.reduce((s, i) => s + (i.price * i.qty), 0)
+                customer: {
+                    name: document.getElementById('custName').value,
+                    phone: document.getElementById('custPhone').value,
+                    email: document.getElementById('custEmail').value || '',
+                    address: document.getElementById('custAddr').value,
+                    note: document.getElementById('custNote').value || ''
+                },
+                items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
+                subtotal: subtotal,
+                shippingFee: shippingFee,
+                shippingMethod: shippingRadio.value,
+                total: finalTotal,
+                status: 'Chờ xác nhận',
+                createdAt: serverTimestamp()
             };
 
             try {
-                const res = await fetch(`${API_URL}/api/orders`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData)
-                });
+                await addDoc(collection(db, "orders"), orderData);
 
-                if (res.ok) {
-                    closeCheckoutModal();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Đặt hàng thành công!',
-                        text: 'Cảm ơn bạn đã ủng hộ. Cửa hàng sẽ liên hệ sớm nhất!',
-                        confirmButtonColor: '#4F46E5'
+                if (TG_TOKEN !== 'YOUR_TELEGRAM_BOT_TOKEN') {
+                    const msg = `🔔 ĐƠN HÀNG MỚI (VOTANNHAN.SITE)\n👤 Khách: ${orderData.customer.name} - ${orderData.customer.phone}\n📍 Địa chỉ: ${orderData.customer.address}\n📦 Sản phẩm:\n` 
+                                + cart.map(i => `- ${i.name} (x${i.qty})`).join('\n') 
+                                + `\n💰 TỔNG TIỀN: ${finalTotal.toLocaleString()}₫`;
+
+                    await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({chat_id: TG_CHAT_ID, text: msg})
                     });
-                    cart = [];
-                    updateCartUI();
-                } else {
-                    Toast.fire({ icon: 'error', title: 'Không thể đặt hàng. Vui lòng thử lại!' });
                 }
+
+                alert("🎉 Đặt hàng thành công! Đơn hàng của bạn đã lưu vào hệ thống.");
+                cart = [];
+                updateCart();
+                showHome();
             } catch (err) {
-                Toast.fire({ icon: 'error', title: 'Lỗi kết nối máy chủ!' });
+                alert("Lỗi khi lưu đơn hàng: " + err.message);
             } finally {
                 btn.disabled = false;
-                btn.innerText = "XÁC NHẬN ĐẶT HÀNG";
+                btn.innerText = "📦 ĐẶT HÀNG NGAY";
             }
-        }
-
-        // Tìm kiếm
-        function searchProducts() {
-            const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q));
-            renderProducts(filtered);
-        }
-
-        function showHome() {
-            document.getElementById('searchInput').value = '';
-            filterCategory('Tất cả');
-        }
-
-        // Khởi chạy khi trang web sẵn sàng
-        window.onload = () => {
-            fetchProducts();
-            loadAnnouncement();
         };
+
+        window.showHome = function() { hidePages(); document.getElementById('homePage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
+        window.showAllProducts = function() { hidePages(); document.getElementById('allProductsPage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
+        window.showContact = function() { hidePages(); document.getElementById('contactPage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
+        function hidePages() { ['homePage','allProductsPage','contactPage','checkoutPage'].forEach(id => document.getElementById(id).style.display='none'); }
+
+        window.searchProducts = function() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            showAllProducts();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query));
+            renderProducts(document.getElementById('allProductsGrid'), filtered);
+            document.getElementById('allCatTitle').innerText = "Tìm kiếm: " + query;
+        }
+
+        window.onload = fetchProductsFromFirebase;
     </script>
+    <script>
+    const API_URL = "https://sweet-mud-da35.nhanv1699.workers.dev";
+
+    // Lấy thông báo mới nhất từ Admin hiển thị lên đầu trang
+    async function loadAnnouncement() {
+        try {
+            const res = await fetch(`${API_URL}/api/notify`);
+            const data = await res.json();
+            if (data && data.title && data.content) {
+                document.getElementById('announcementText').innerHTML = `📢 <strong>${data.title}:</strong> ${data.content}`;
+                document.getElementById('siteAnnouncement').style.display = 'block';
+            }
+        } catch (e) {
+            console.error("Lỗi tải thông báo:", e);
+        }
+    }
+
+    // Tự động gọi khi tải xong trang web
+    window.addEventListener('DOMContentLoaded', loadAnnouncement);
+</script>
 </body>
 </html>
