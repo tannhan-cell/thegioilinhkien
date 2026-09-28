@@ -204,242 +204,209 @@
     </div>
 
     <!-- Firebase SDK (Firestore) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <script>
+    // Link API Server Worker của bạn
+    const API_URL = "https://sweet-mud-da35.nhanv1699.workers.dev";
 
-        // Cấu hình Firebase
-        const firebaseConfig = {
-          apiKey: "AIzaSyDKfcPAUeXyEVRjpXmGUWp8ZehmNVU8DAg",
-          authDomain: "votannhan-shop.firebaseapp.com",
-          projectId: "votannhan-shop",
-          storageBucket: "votannhan-shop.firebasestorage.app",
-          messagingSenderId: "112895518426",
-          appId: "1:112895518426:web:239ccbdf9c6d75ab33e7e3"
+    let allProducts = [];
+    let cart = [];
+
+    // 1. Tải danh sách sản phẩm từ Server API (Sạch 100% Firebase)
+    async function fetchProductsFromFirebase() {
+        try {
+            const res = await fetch(`${API_URL}/api/products`);
+            allProducts = await res.json();
+            renderProducts(document.getElementById('newProductsGrid'), allProducts);
+            buildCategoryMenu();
+        } catch (error) {
+            console.error("Lỗi lấy dữ liệu:", error);
+            document.getElementById('newProductsGrid').innerHTML = "<p style='color:red'>Không thể kết nối CSDL!</p>";
+        }
+    }
+
+    function renderProducts(targetGrid, list) {
+        if(!list || list.length === 0) {
+            targetGrid.innerHTML = "<p>Không tìm thấy sản phẩm nào.</p>";
+            return;
+        }
+        targetGrid.innerHTML = list.map(p => {
+            const stock = p.stock !== undefined ? p.stock : 100;
+            const isOutOfStock = stock <= 0;
+            return `
+            <div class="product-card">
+                <img src="${p.img || 'https://via.placeholder.com/150'}" alt="${p.name}">
+                <div class="product-name">${p.name}</div>
+                <div class="price">${Number(p.price).toLocaleString()}₫</div>
+                <div class="stock-badge ${isOutOfStock ? 'out' : ''}">${isOutOfStock ? 'Hết hàng' : 'Còn hàng: ' + stock}</div>
+                <button class="btn-buy" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${p.id}')">
+                    ${isOutOfStock ? 'HẾT HÀNG' : '<i class="fas fa-cart-plus"></i> Thêm vào giỏ'}
+                </button>
+            </div>
+        `}).join('');
+    }
+
+    function buildCategoryMenu() {
+        const categories = [...new Set(allProducts.map(p => p.cat).filter(Boolean))];
+        const menu = document.getElementById('categoryMenu');
+        let html = `<li><a href="javascript:void(0)" onclick="filterCat('Tất cả')">Tất cả sản phẩm</a></li>`;
+        categories.forEach(cat => {
+            html += `<li><a href="javascript:void(0)" onclick="filterCat('${cat}')">${cat}</a></li>`;
+        });
+        menu.innerHTML = html;
+    }
+
+    window.filterCat = function(catName) {
+        showAllProducts();
+        if(catName === 'Tất cả') {
+            renderProducts(document.getElementById('allProductsGrid'), allProducts);
+            document.getElementById('allCatTitle').innerText = "Tất cả sản phẩm";
+        } else {
+            const filtered = allProducts.filter(p => p.cat === catName);
+            renderProducts(document.getElementById('allProductsGrid'), filtered);
+            document.getElementById('allCatTitle').innerText = "Danh mục: " + catName;
+        }
+    }
+
+    window.addToCart = function(id) {
+        const item = allProducts.find(p => p.id === id);
+        if(!item) return;
+        const existing = cart.find(c => c.id === id);
+        if(existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({ ...item, qty: 1 });
+        }
+        updateCart();
+        alert("Đã thêm " + item.name + " vào giỏ!");
+    }
+
+    function updateCart() {
+        document.getElementById('cartCount').innerText = cart.reduce((s, i) => s + i.qty, 0);
+        const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        document.getElementById('totalPrice').innerText = "Tổng: " + total.toLocaleString() + "₫";
+
+        document.getElementById('cartList').innerHTML = cart.map((item, idx) => `
+            <div class="cart-item">
+                <span class="cart-item-name">${item.name}</span>
+                <div class="qty-input">
+                    <button onclick="changeQty(${idx}, -1)">-</button>
+                    <span>${item.qty}</span>
+                    <button onclick="changeQty(${idx}, 1)">+</button>
+                </div>
+                <span class="cart-item-price">${(item.price * item.qty).toLocaleString()}₫</span>
+                <i class="fas fa-trash" onclick="removeItem(${idx})" style="color:red; cursor:pointer; margin-left:15px"></i>
+            </div>
+        `).join('');
+    }
+
+    window.changeQty = function(idx, delta) {
+        if(cart[idx].qty + delta > 0) {
+            cart[idx].qty += delta;
+        } else {
+            cart.splice(idx, 1);
+        }
+        updateCart();
+        if(document.getElementById('checkoutPage').style.display === 'block') renderCheckoutSummary();
+    }
+
+    window.removeItem = function(idx) {
+        cart.splice(idx, 1);
+        updateCart();
+        if(document.getElementById('checkoutPage').style.display === 'block') renderCheckoutSummary();
+    }
+
+    window.toggleCart = function() {
+        const m = document.getElementById('cartModal');
+        m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+    }
+
+    window.goToCheckout = function() {
+        if(cart.length === 0) return alert("Giỏ hàng đang trống!");
+        toggleCart();
+        hidePages();
+        document.getElementById('sidebarArea').style.display = 'none';
+        document.getElementById('checkoutPage').style.display = 'block';
+        renderCheckoutSummary();
+    }
+
+    function renderCheckoutSummary() {
+        const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        document.getElementById('checkoutProductList').innerHTML = cart.map(i => `
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span>${i.name} (x${i.qty})</span>
+                <strong>${(i.price * i.qty).toLocaleString()}₫</strong>
+            </div>
+        `).join('');
+        document.getElementById('checkoutSubtotal').innerText = subtotal.toLocaleString() + "₫";
+        updateTotal();
+    }
+
+    window.updateTotal = function() {
+        const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const shippingRadio = document.querySelector('input[name="shipping"]:checked');
+        const shippingFee = parseInt(shippingRadio.getAttribute('data-price') || 0);
+        document.getElementById('checkoutShippingFee').innerText = shippingFee === 0 ? "Miễn phí" : shippingFee.toLocaleString() + "₫";
+        document.getElementById('checkoutFinalTotal').innerText = (subtotal + shippingFee).toLocaleString() + "₫";
+    }
+
+    // 2. Gửi đơn hàng lên Server API (Lưu Firestore + Gửi Telegram tự động ở Server)
+    document.getElementById('checkoutForm').onsubmit = async function(e) {
+        e.preventDefault();
+        if(cart.length === 0) return alert("Giỏ hàng trống!");
+
+        const btn = document.getElementById('btnSubmitOrder');
+        btn.disabled = true;
+        btn.innerText = "ĐANG XỬ LÝ ĐƠN HÀNG...";
+
+        const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+        const shippingRadio = document.querySelector('input[name="shipping"]:checked');
+        const shippingFee = parseInt(shippingRadio.getAttribute('data-price') || 0);
+        const finalTotal = subtotal + shippingFee;
+
+        const orderData = {
+            name: document.getElementById('custName').value,
+            phone: document.getElementById('custPhone').value,
+            address: document.getElementById('custAddr').value,
+            total: finalTotal
         };
 
-        const TG_TOKEN = '8307118775:AAFnilkDdME-Kz0bxqBdDLLQlZ3yE3HGsmo';
-        const TG_CHAT_ID = '6021357708';
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        let allProducts = [];
-        let cart = [];
-
-        // Lấy sản phẩm từ Firebase về
-        async function fetchProductsFromFirebase() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "products"));
-                allProducts = [];
-                querySnapshot.forEach((doc) => {
-                    allProducts.push({ id: doc.id, ...doc.data() });
-                });
-                renderProducts(document.getElementById('newProductsGrid'), allProducts);
-                buildCategoryMenu();
-            } catch (error) {
-                console.error("Lỗi lấy dữ liệu:", error);
-                document.getElementById('newProductsGrid').innerHTML = "<p style='color:red'>Không thể kết nối CSDL Firebase!</p>";
-            }
-        }
-
-        function renderProducts(targetGrid, list) {
-            if(!list || list.length === 0) {
-                targetGrid.innerHTML = "<p>Không tìm thấy sản phẩm nào.</p>";
-                return;
-            }
-            targetGrid.innerHTML = list.map(p => {
-                const stock = p.stock !== undefined ? p.stock : 100;
-                const isOutOfStock = stock <= 0;
-                return `
-                <div class="product-card">
-                    <img src="${p.img || 'https://via.placeholder.com/150'}" alt="${p.name}">
-                    <div class="product-name">${p.name}</div>
-                    <div class="price">${Number(p.price).toLocaleString()}₫</div>
-                    <div class="stock-badge ${isOutOfStock ? 'out' : ''}">${isOutOfStock ? 'Hết hàng' : 'Còn hàng: ' + stock}</div>
-                    <button class="btn-buy" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${p.id}')">
-                        ${isOutOfStock ? 'HẾT HÀNG' : '<i class="fas fa-cart-plus"></i> Thêm vào giỏ'}
-                    </button>
-                </div>
-            `}).join('');
-        }
-
-        function buildCategoryMenu() {
-            const categories = [...new Set(allProducts.map(p => p.cat).filter(Boolean))];
-            const menu = document.getElementById('categoryMenu');
-            let html = `<li><a href="javascript:void(0)" onclick="filterCat('Tất cả')">Tất cả sản phẩm</a></li>`;
-            categories.forEach(cat => {
-                html += `<li><a href="javascript:void(0)" onclick="filterCat('${cat}')">${cat}</a></li>`;
+        try {
+            const res = await fetch(`${API_URL}/api/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
             });
-            menu.innerHTML = html;
-        }
 
-        window.filterCat = function(catName) {
-            showAllProducts();
-            if(catName === 'Tất cả') {
-                renderProducts(document.getElementById('allProductsGrid'), allProducts);
-                document.getElementById('allCatTitle').innerText = "Tất cả sản phẩm";
-            } else {
-                const filtered = allProducts.filter(p => p.cat === catName);
-                renderProducts(document.getElementById('allProductsGrid'), filtered);
-                document.getElementById('allCatTitle').innerText = "Danh mục: " + catName;
-            }
-        }
-
-        window.addToCart = function(id) {
-            const item = allProducts.find(p => p.id === id);
-            if(!item) return;
-            const existing = cart.find(c => c.id === id);
-            if(existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({ ...item, qty: 1 });
-            }
-            updateCart();
-            alert("Đã thêm " + item.name + " vào giỏ!");
-        }
-
-        function updateCart() {
-            document.getElementById('cartCount').innerText = cart.reduce((s, i) => s + i.qty, 0);
-            const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            document.getElementById('totalPrice').innerText = "Tổng: " + total.toLocaleString() + "₫";
-
-            document.getElementById('cartList').innerHTML = cart.map((item, idx) => `
-                <div class="cart-item">
-                    <span class="cart-item-name">${item.name}</span>
-                    <div class="qty-input">
-                        <button onclick="changeQty(${idx}, -1)">-</button>
-                        <span>${item.qty}</span>
-                        <button onclick="changeQty(${idx}, 1)">+</button>
-                    </div>
-                    <span class="cart-item-price">${(item.price * item.qty).toLocaleString()}₫</span>
-                    <i class="fas fa-trash" onclick="removeItem(${idx})" style="color:red; cursor:pointer; margin-left:15px"></i>
-                </div>
-            `).join('');
-        }
-
-        window.changeQty = function(idx, delta) {
-            if(cart[idx].qty + delta > 0) {
-                cart[idx].qty += delta;
-            } else {
-                cart.splice(idx, 1);
-            }
-            updateCart();
-            if(document.getElementById('checkoutPage').style.display === 'block') renderCheckoutSummary();
-        }
-
-        window.removeItem = function(idx) {
-            cart.splice(idx, 1);
-            updateCart();
-            if(document.getElementById('checkoutPage').style.display === 'block') renderCheckoutSummary();
-        }
-
-        window.toggleCart = function() {
-            const m = document.getElementById('cartModal');
-            m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-        }
-
-        window.goToCheckout = function() {
-            if(cart.length === 0) return alert("Giỏ hàng đang trống!");
-            toggleCart();
-            hidePages();
-            document.getElementById('sidebarArea').style.display = 'none';
-            document.getElementById('checkoutPage').style.display = 'block';
-            renderCheckoutSummary();
-        }
-
-        function renderCheckoutSummary() {
-            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            document.getElementById('checkoutProductList').innerHTML = cart.map(i => `
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <span>${i.name} (x${i.qty})</span>
-                    <strong>${(i.price * i.qty).toLocaleString()}₫</strong>
-                </div>
-            `).join('');
-            document.getElementById('checkoutSubtotal').innerText = subtotal.toLocaleString() + "₫";
-            updateTotal();
-        }
-
-        window.updateTotal = function() {
-            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            const shippingRadio = document.querySelector('input[name="shipping"]:checked');
-            const shippingFee = parseInt(shippingRadio.getAttribute('data-price') || 0);
-            document.getElementById('checkoutShippingFee').innerText = shippingFee === 0 ? "Miễn phí" : shippingFee.toLocaleString() + "₫";
-            document.getElementById('checkoutFinalTotal').innerText = (subtotal + shippingFee).toLocaleString() + "₫";
-        }
-
-        // Xử lý gửi Đơn hàng lên Firebase Firestore + Telegram
-        document.getElementById('checkoutForm').onsubmit = async function(e) {
-            e.preventDefault();
-            if(cart.length === 0) return alert("Giỏ hàng trống!");
-
-            const btn = document.getElementById('btnSubmitOrder');
-            btn.disabled = true;
-            btn.innerText = "ĐANG XỬ LÝ ĐƠN HÀNG...";
-
-            const subtotal = cart.reduce((s, i) => s + (i.price * i.qty), 0);
-            const shippingRadio = document.querySelector('input[name="shipping"]:checked');
-            const shippingFee = parseInt(shippingRadio.getAttribute('data-price') || 0);
-            const finalTotal = subtotal + shippingFee;
-
-            const orderData = {
-                customer: {
-                    name: document.getElementById('custName').value,
-                    phone: document.getElementById('custPhone').value,
-                    email: document.getElementById('custEmail').value || '',
-                    address: document.getElementById('custAddr').value,
-                    note: document.getElementById('custNote').value || ''
-                },
-                items: cart.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty })),
-                subtotal: subtotal,
-                shippingFee: shippingFee,
-                shippingMethod: shippingRadio.value,
-                total: finalTotal,
-                status: 'Chờ xác nhận',
-                createdAt: serverTimestamp()
-            };
-
-            try {
-                // 1. Lưu đơn hàng thật vào Firebase Database
-                await addDoc(collection(db, "orders"), orderData);
-
-                // 2. Gửi thông báo qua Telegram
-                const msg = `🔔 ĐƠN HÀNG MỚI (VOTANNHAN.SITE)\n👤 Khách: ${orderData.customer.name} - ${orderData.customer.phone}\n📍 Địa chỉ: ${orderData.customer.address}\n📦 Sản phẩm:\n` 
-                            + cart.map(i => `- ${i.name} (x${i.qty})`).join('\n') 
-                            + `\n💰 TỔNG TIỀN: ${finalTotal.toLocaleString()}₫`;
-
-                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({chat_id: TG_CHAT_ID, text: msg})
-                });
-
-                alert("🎉 Đặt hàng thành công! Đơn hàng của bạn đã lưu vào hệ thống.");
+            if (res.ok) {
+                alert("🎉 Đặt hàng thành công! Đơn hàng của bạn đã được gửi.");
                 cart = [];
                 updateCart();
                 showHome();
-            } catch (err) {
-                alert("Lỗi khi lưu đơn hàng: " + err.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "📦 ĐẶT HÀNG NGAY";
+            } else {
+                alert("Có lỗi xảy ra khi đặt hàng.");
             }
-        };
-
-        window.showHome = function() { hidePages(); document.getElementById('homePage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
-        window.showAllProducts = function() { hidePages(); document.getElementById('allProductsPage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
-        window.showContact = function() { hidePages(); document.getElementById('contactPage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
-        function hidePages() { ['homePage','allProductsPage','contactPage','checkoutPage'].forEach(id => document.getElementById(id).style.display='none'); }
-
-        window.searchProducts = function() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            showAllProducts();
-            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query));
-            renderProducts(document.getElementById('allProductsGrid'), filtered);
-            document.getElementById('allCatTitle').innerText = "Tìm kiếm: " + query;
+        } catch (err) {
+            alert("Lỗi kết nối: " + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "📦 ĐẶT HÀNG NGAY";
         }
+    };
 
-        window.onload = fetchProductsFromFirebase;
-    </script>
+    window.showHome = function() { hidePages(); document.getElementById('homePage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
+    window.showAllProducts = function() { hidePages(); document.getElementById('allProductsPage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
+    window.showContact = function() { hidePages(); document.getElementById('contactPage').style.display = 'block'; document.getElementById('sidebarArea').style.display='block'; }
+    function hidePages() { ['homePage','allProductsPage','contactPage','checkoutPage'].forEach(id => document.getElementById(id).style.display='none'); }
+
+    window.searchProducts = function() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        showAllProducts();
+        const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query));
+        renderProducts(document.getElementById('allProductsGrid'), filtered);
+        document.getElementById('allCatTitle').innerText = "Tìm kiếm: " + query;
+    }
+
+    window.onload = fetchProductsFromFirebase;
+</script>
 </body>
 </html>
