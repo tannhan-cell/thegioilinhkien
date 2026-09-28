@@ -399,13 +399,18 @@
         }
 
         function formatOrderItems(items, order) {
-            if(items && items.length > 0) {
-                return items.map(i => `<div class="mb-1 text-sm">• ${i.name || 'Sản phẩm'} <span class="text-indigo-600 font-bold ml-1">x${i.quantity || 1}</span></div>`).join('');
-            } else if (order.productName) {
-                return `<div class="text-sm">• ${order.productName} <span class="text-indigo-600 font-bold ml-1">x${order.quantity || 1}</span></div>`;
-            }
-            return '<span class="text-slate-400 italic">Không rõ chi tiết</span>';
-        }
+    if(items && items.length > 0) {
+        return items.map(i => {
+            // Lấy linh hoạt biến qty hoặc quantity
+            const q = i.qty || i.quantity || 1;
+            return `<div class="mb-1 text-sm">• ${i.name || 'Sản phẩm'} <span class="text-indigo-600 font-bold ml-1">x${q}</span></div>`;
+        }).join('');
+    } else if (order.productName) {
+        const q = order.qty || order.quantity || 1;
+        return `<div class="text-sm">• ${order.productName} <span class="text-indigo-600 font-bold ml-1">x${q}</span></div>`;
+    }
+    return '<span class="text-slate-400 italic">Không rõ chi tiết</span>';
+}
 
         function renderOrders(list) {
             const tbody = document.getElementById('orderTableBody');
