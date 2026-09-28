@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 cho thông báo & Dialog cực đẹp -->
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -23,7 +23,7 @@
         <div>
             <!-- Logo -->
             <div class="h-16 flex items-center px-6 bg-slate-950 font-bold text-xl text-white gap-3">
-                <i class="fa-solid fa-[#4F46E5] fa-store text-indigo-500"></i>
+                <i class="fa-solid fa-store text-indigo-500"></i>
                 <span>Admin Pro</span>
             </div>
             <!-- Navigation -->
@@ -205,11 +205,9 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Đường link API từ Cloudflare Worker
         const API_URL = "https://sweet-mud-da35.nhanv1699.workers.dev";
         let products = [];
 
-        // Toast thông báo góc cực kỳ mượt mà
         const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
@@ -218,14 +216,19 @@
             timerProgressBar: true
         });
 
-        // Tải danh sách sản phẩm
+        // Tải danh sách sản phẩm (Đã thêm ép kiểu Array an toàn)
         async function loadProducts() {
             try {
                 const res = await fetch(`${API_URL}/api/products`);
-                products = await res.json();
+                const data = await res.json();
+                
+                // Kiểm tra xem data trả về là Mảng trực tiếp hay Object chứa Mảng
+                products = Array.isArray(data) ? data : (data.products || data.data || []);
+                
                 renderTable(products);
                 updateStats();
             } catch (err) {
+                console.error(err);
                 Toast.fire({ icon: 'error', title: 'Không thể kết nối API Server!' });
             }
         }
@@ -233,7 +236,7 @@
         // Hiển thị danh sách lên Bảng
         function renderTable(list) {
             const tbody = document.getElementById('productTableBody');
-            if(!list || list.length === 0) {
+            if(!Array.isArray(list) || list.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-400">Không tìm thấy sản phẩm nào.</td></tr>`;
                 return;
             }
@@ -242,12 +245,12 @@
                 <tr class="hover:bg-slate-50/80 transition">
                     <td class="py-3 px-4 flex items-center gap-3">
                         <img src="${p.img || 'https://via.placeholder.com/80'}" class="w-10 h-10 rounded-lg object-cover border border-slate-100">
-                        <span class="font-semibold text-slate-800">${p.name}</span>
+                        <span class="font-semibold text-slate-800">${p.name || ''}</span>
                     </td>
-                    <td class="py-3 px-4"><span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-md font-medium">${p.cat}</span></td>
-                    <td class="py-3 px-4 font-bold text-slate-900">${Number(p.price).toLocaleString()}₫</td>
+                    <td class="py-3 px-4"><span class="bg-slate-100 text-slate-600 text-xs px-2.5 py-1 rounded-md font-medium">${p.cat || 'Chưa phân loại'}</span></td>
+                    <td class="py-3 px-4 font-bold text-slate-900">${Number(p.price || 0).toLocaleString()}₫</td>
                     <td class="py-3 px-4">
-                        ${p.stock > 0 
+                        ${(p.stock || 0) > 0 
                             ? `<span class="inline-flex items-center gap-1.5 text-xs text-emerald-600 font-semibold"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${p.stock}</span>`
                             : `<span class="inline-flex items-center gap-1.5 text-xs text-rose-600 font-semibold"><span class="w-2 h-2 rounded-full bg-rose-500"></span> Hết hàng</span>`
                         }
@@ -260,30 +263,30 @@
             `).join('');
         }
 
-        // Cập nhật thẻ thống kê
         function updateStats() {
             document.getElementById('statTotal').innerText = products.length;
-            document.getElementById('statInStock').innerText = products.filter(p => (p.stock || 100) > 0).length;
-            document.getElementById('statOutOfStock').innerText = products.filter(p => (p.stock || 0) <= 0).length;
+            document.getElementById('statInStock').innerText = products.filter(p => Number(p.stock || 0) > 0).length;
+            document.getElementById('statOutOfStock').innerText = products.filter(p => Number(p.stock || 0) <= 0).length;
         }
 
-        // Tìm kiếm sản phẩm
         function filterProducts() {
             const q = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q));
+            const filtered = products.filter(p => 
+                (p.name && p.name.toLowerCase().includes(q)) || 
+                (p.cat && p.cat.toLowerCase().includes(q))
+            );
             renderTable(filtered);
         }
 
-        // Mở / Đóng Modal Form
         function openProductModal(p = null) {
             document.getElementById('productForm').reset();
             if(p) {
                 document.getElementById('modalTitle').innerText = "Cập Nhật Sản Phẩm";
                 document.getElementById('pId').value = p.id;
-                document.getElementById('pName').value = p.name;
-                document.getElementById('pCat').value = p.cat;
-                document.getElementById('pPrice').value = p.price;
-                document.getElementById('pStock').value = p.stock || 100;
+                document.getElementById('pName').value = p.name || '';
+                document.getElementById('pCat').value = p.cat || '';
+                document.getElementById('pPrice').value = p.price || 0;
+                document.getElementById('pStock').value = p.stock || 0;
                 document.getElementById('pImg').value = p.img || '';
             } else {
                 document.getElementById('modalTitle').innerText = "Thêm Sản Phẩm Mới";
@@ -304,12 +307,12 @@
             setTimeout(() => { modal.classList.remove('flex'); modal.classList.add('hidden'); }, 200);
         }
 
+        // Sửa so sánh kiểu dữ liệu ID
         function editProduct(id) {
-            const p = products.find(item => item.id === id);
+            const p = products.find(item => String(item.id) === String(id));
             if(p) openProductModal(p);
         }
 
-        // Thêm hoặc Cập nhật sản phẩm
         async function handleSaveProduct(e) {
             e.preventDefault();
             const btnSave = document.getElementById('btnSave');
@@ -348,7 +351,6 @@
             }
         }
 
-        // Xóa sản phẩm với cảnh báo xác nhận
         async function deleteProduct(id) {
             const result = await Swal.fire({
                 title: 'Xóa sản phẩm này?',
@@ -378,7 +380,6 @@
             }
         }
 
-        // Phát thông báo lên Web
         async function sendWebNotification() {
             const title = document.getElementById('notifyTitle').value;
             const content = document.getElementById('notifyContent').value;
@@ -404,7 +405,6 @@
             }
         }
 
-        // Chuyển Tab Navigation
         function switchTab(tab) {
             document.getElementById('tab-products').classList.add('hidden');
             document.getElementById('tab-notify').classList.add('hidden');
@@ -422,7 +422,6 @@
             }
         }
 
-        // Tải dữ liệu ban đầu
         window.onload = loadProducts;
     </script>
 </body>
